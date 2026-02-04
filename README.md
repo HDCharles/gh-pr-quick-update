@@ -5,3 +5,6 @@ For users who are annoyed by clicking approve workflows to run, realizing the PR
 
 <img width="803" height="805" alt="image" src="https://github.com/user-attachments/assets/1be565f7-e19e-4550-a121-4a478bc197e6" />
 
+# Installation
+
+Put the [Tampermonkey](https://www.tampermonkey.net/) on your browser and then add a new script, copy-paste the [script](https://raw.githubusercontent.com/HDCharles/gh-pr-quick-update/refs/heads/main/gh-pr-quick-update.js) in and then save
