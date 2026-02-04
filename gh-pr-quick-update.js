@@ -1,8 +1,11 @@
 // ==UserScript==
 // @name         GitHub PR Update Button Next to Approve
-// @namespace    http://tampermonkey.net/
+// @namespace    https://github.com/HDCharles/gh-pr-quick-update
 // @version      1.1
 // @description  Add a small Update Branch button next to Approve Workflows
+// @author       HDCharles
+// @homepageURL  https://github.com/HDCharles/gh-pr-quick-update
+// @supportURL   https://github.com/HDCharles/gh-pr-quick-update/issues
 // @match        https://github.com/*/*/pull/*
 // @grant        none
 // ==/UserScript==
