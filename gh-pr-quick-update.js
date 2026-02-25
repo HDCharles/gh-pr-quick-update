@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         GitHub PR Update Button Next to Approve
 // @namespace    https://github.com/HDCharles/gh-pr-quick-update
-// @version      1.1
-// @description  Add a small Update Branch button next to Approve Workflows
+// @version      1.3
+// @description  Add an Update & Approve button when branch is out of date
 // @author       HDCharles
 // @homepageURL  https://github.com/HDCharles/gh-pr-quick-update
 // @supportURL   https://github.com/HDCharles/gh-pr-quick-update/issues
@@ -13,7 +13,7 @@
 (function() {
     'use strict';
 
-    const BUTTON_ID = 'quick-update-branch-btn';
+    const BUTTON_ID = 'quick-update-approve-btn';
 
     function findButton(labelText) {
         const buttons = document.querySelectorAll('button.prc-Button-ButtonBase-9n-Xk');
@@ -26,48 +26,59 @@
         return null;
     }
 
-    function addUpdateButton() {
+    function addUpdateApproveButton() {
         // Don't add if already exists
         if (document.getElementById(BUTTON_ID)) return;
 
         const updateBtn = findButton('Update branch');
         const approveBtn = findButton('Approve workflows to run');
 
-        // Only add if both buttons exist
+        // Only add if BOTH buttons exist (branch is out of date AND needs approval)
         if (!updateBtn || !approveBtn) return;
 
-        // Find the wrapper div around the approve button
         const approveWrapper = approveBtn.closest('[data-loading-wrapper="true"]');
         if (!approveWrapper) return;
 
-        // Create a small update button
-        const quickUpdateBtn = document.createElement('button');
-        quickUpdateBtn.id = BUTTON_ID;
-        quickUpdateBtn.type = 'button';
-        quickUpdateBtn.className = 'prc-Button-ButtonBase-9n-Xk';
-        quickUpdateBtn.setAttribute('data-loading', 'false');
-        quickUpdateBtn.setAttribute('data-size', 'medium');
-        quickUpdateBtn.setAttribute('data-variant', 'default');
-        quickUpdateBtn.style.marginRight = '8px';
-        quickUpdateBtn.innerHTML = `
+        // Hide the original approve button
+        approveWrapper.style.display = 'none';
+
+        // Create the combined button
+        const comboBtn = document.createElement('button');
+        comboBtn.id = BUTTON_ID;
+        comboBtn.type = 'button';
+        comboBtn.className = 'prc-Button-ButtonBase-9n-Xk';
+        comboBtn.setAttribute('data-loading', 'false');
+        comboBtn.setAttribute('data-size', 'medium');
+        comboBtn.setAttribute('data-variant', 'default');
+        comboBtn.innerHTML = `
             <span data-component="buttonContent" data-align="center" class="prc-Button-ButtonContent-Iohp5">
-                <span data-component="text" class="prc-Button-Label-FWkx3">Update</span>
+                <span data-component="text" class="prc-Button-Label-FWkx3">Update & Approve workflows to run</span>
             </span>
         `;
 
-        quickUpdateBtn.addEventListener('click', () => {
+        comboBtn.addEventListener('click', () => {
+            const label = comboBtn.querySelector('.prc-Button-Label-FWkx3');
+            label.textContent = 'Updating...';
+
             const currentUpdateBtn = findButton('Update branch');
             if (currentUpdateBtn) {
                 currentUpdateBtn.click();
             }
+
+            setTimeout(() => {
+                label.textContent = 'Approving...';
+                const currentApproveBtn = findButton('Approve workflows to run');
+                if (currentApproveBtn) {
+                    currentApproveBtn.click();
+                }
+            }, 1500);
         });
 
-        // Insert before the approve button wrapper
-        approveWrapper.parentNode.insertBefore(quickUpdateBtn, approveWrapper);
+        // Insert where the approve button was
+        approveWrapper.parentNode.insertBefore(comboBtn, approveWrapper);
     }
 
-    // Run on load and observe for dynamic content
-    const observer = new MutationObserver(addUpdateButton);
+    const observer = new MutationObserver(addUpdateApproveButton);
     observer.observe(document.body, { childList: true, subtree: true });
-    addUpdateButton();
+    addUpdateApproveButton();
 })();
